@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Matheus Willock",
+  "classifications": ["Web", "API", "Clean Architecture", "Backend"],
+  "identity": "MatheusWillock.DotnetTemplateWillock",
+  "name": "dotnet-template-willock",
+  "shortName": "dotnet-template-willock",
+  "sourceName": "CleanArchTemplate",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "symbols": {
+    "framework": {
+      "type": "parameter",
+      "datatype": "choice",
+      "description": "Target framework",
+      "choices": [
+        {
+          "choice": "net10.0",
+          "description": ".NET 10"
+        }
+      ],
+      "defaultValue": "net10.0",
+      "replaces": "net10.0"
+    }
+  }
+}

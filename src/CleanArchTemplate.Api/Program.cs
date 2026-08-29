@@ -1,0 +1,58 @@
+using System.Text.Json;
+using CleanArchTemplate.Api.Extensions;
+using CleanArchTemplate.Api.Middlewares;
+using CleanArchTemplate.Application;
+using CleanArchTemplate.Application.UseCases.Samples.CreateSample;
+using CleanArchTemplate.Infrastructure;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+builder.Services.AddHealthChecks();
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
+
+var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
+
+app.UseHttpsRedirection();
+app.MapControllers();
+
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = async (context, report) =>
+    {
+        context.Response.ContentType = "application/json";
+
+        await context.Response.WriteAsync(JsonSerializer.Serialize(new
+        {
+            status = report.Status.ToString(),
+            checks = report.Entries.Select(entry => new
+            {
+                name = entry.Key,
+                status = entry.Value.Status.ToString(),
+                description = entry.Value.Description
+            })
+        }));
+    }
+});
+
+var samples = app.MapGroup("/api/samples").WithTags("Samples");
+
+samples.MapPost("/", async (CreateSampleInput input, ICreateSampleUseCase useCase, CancellationToken cancellationToken) =>
+{
+    var output = await useCase.ExecuteAsync(input, cancellationToken);
+    return output.ToCreatedResult($"/api/samples/{output.Result?.Id}");
+});
+
+app.Run();
+
+public partial class Program;

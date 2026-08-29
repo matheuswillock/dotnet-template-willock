@@ -8,6 +8,7 @@ Template backend em .NET com Clean Architecture.
 - Clean Architecture com `Domain`, `Application`, `Infrastructure`, `Api` e `Tests`.
 - Referencias entre projetos ja configuradas.
 - Entity Framework Core com PostgreSQL/Npgsql.
+- Banco em memoria no ambiente `Development` para rodar direto pelo Rider sem PostgreSQL local.
 - `Dockerfile` e `docker-compose.yml` com PostgreSQL.
 - Padrao `IOutput<T>` e `Output<T>` para comunicacao entre Use Cases e Controllers/Endpoints.
 - Padrao de `Input` e `Output` por Use Case.
@@ -121,6 +122,20 @@ Rode a API:
 dotnet run --project src/NomeDoProjeto.Api/NomeDoProjeto.Api.csproj
 ```
 
+No perfil de desenvolvimento, o template usa `Database:Provider = InMemory`, entao voce consegue testar endpoints pelo Rider sem subir PostgreSQL.
+
+Para usar PostgreSQL local, altere em `src/NomeDoProjeto.Api/appsettings.Development.json`:
+
+```json
+{
+  "Database": {
+    "Provider": "PostgreSql"
+  }
+}
+```
+
+Depois garanta que existe um PostgreSQL escutando em `localhost:5432`, ou rode com Docker.
+
 Teste o ping:
 
 ```bash
@@ -151,6 +166,7 @@ O projeto de testes ja vem com:
 - Teste de integracao para `GET /api/ping`.
 - Teste de integracao para `GET /health`.
 - Teste de integracao para `GET /swagger/v1/swagger.json`.
+- Teste de integracao para `POST /api/samples` sem depender de PostgreSQL local.
 
 ## Rodar Com Docker
 

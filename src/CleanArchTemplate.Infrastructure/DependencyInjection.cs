@@ -16,9 +16,14 @@ public static class DependencyInjection
     {
         services.AddDbContext<AppDbContext>(options =>
         {
-            // Provider padrao: PostgreSQL. Ajuste a connection string em appsettings.json ou variaveis de ambiente.
-            // Para outro banco, troque o provider aqui e o pacote NuGet no projeto Infrastructure.
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            // Development usa InMemory para permitir rodar pelo Rider sem PostgreSQL local.
+            // Docker/producao usam PostgreSQL por padrao. Altere Database:Provider em appsettings se precisar.
+            var provider = configuration["Database:Provider"] ?? "PostgreSql";
+
+            if (provider.Equals("InMemory", StringComparison.OrdinalIgnoreCase))
+                options.UseInMemoryDatabase("CleanArchTemplateDb");
+            else
+                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
         });
 
         services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());

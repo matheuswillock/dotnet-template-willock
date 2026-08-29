@@ -16,6 +16,7 @@ Template backend em .NET com Clean Architecture.
 - Base abstrata para clientes HTTP externos com `BaseUrl`, `BearerToken` e headers vindos do `appsettings.json`.
 - Controller inicial `GET /api/ping`.
 - Health check `GET /health`.
+- Swagger UI em `/swagger`.
 - Testes unitarios e testes de integracao com xUnit.
 
 ## Instalacao Local
@@ -149,6 +150,7 @@ O projeto de testes ja vem com:
 - Teste unitario do `Output<T>`.
 - Teste de integracao para `GET /api/ping`.
 - Teste de integracao para `GET /health`.
+- Teste de integracao para `GET /swagger/v1/swagger.json`.
 
 ## Rodar Com Docker
 
@@ -169,6 +171,7 @@ Endpoints iniciais:
 ```text
 GET http://localhost:8080/api/ping
 GET http://localhost:8080/health
+GET http://localhost:8080/swagger
 ```
 
 ## Camadas

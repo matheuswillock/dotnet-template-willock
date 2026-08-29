@@ -19,6 +19,7 @@ Template backend em .NET com Clean Architecture.
 - Controller inicial `GET /api/ping`.
 - Health check `GET /health`.
 - Swagger UI em `/swagger`.
+- Serilog com logs no console, arquivo local e request logging.
 - Testes unitarios e testes de integracao com xUnit.
 
 ## Instalacao Local
@@ -160,6 +161,31 @@ curl http://localhost:5000/health
 ```bash
 dotnet test
 ```
+
+## Logs
+
+O template usa Serilog por padrao.
+
+Em Docker/Coolify, os logs aparecem no console do container:
+
+```text
+HTTP GET /api/ping responded 200 in 10.1234 ms
+```
+
+Tambem ha arquivo local com rotacao diaria e retencao curta:
+
+```text
+src/NomeDoProjeto.Api/logs/nome-do-projeto-.log
+```
+
+Use `ILogger<T>` nas classes para registrar sucesso, falhas e contexto operacional:
+
+```csharp
+logger.LogInformation("Job processed successfully. JobId={JobId}", jobId);
+logger.LogError(exception, "Failed to process job. JobId={JobId}", jobId);
+```
+
+Para producao, prefira manter os logs no console para o Coolify capturar e adicionar depois um sink externo como Seq, Axiom, Better Stack ou Grafana Cloud.
 
 O projeto de testes ja vem com:
 

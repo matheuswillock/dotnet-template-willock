@@ -10,6 +10,7 @@ Template backend em .NET com Clean Architecture.
 - Entity Framework Core com PostgreSQL/Npgsql.
 - Banco em memoria no ambiente `Development` para rodar direto pelo Rider sem PostgreSQL local.
 - `Dockerfile` e `docker-compose.yml` com PostgreSQL.
+- Migrations do EF Core configuradas com `dotnet-ef` local e `IDesignTimeDbContextFactory`.
 - Padrao `IOutput<T>` e `Output<T>` para comunicacao entre Use Cases e Controllers/Endpoints.
 - Padrao de `Input` e `Output` por Use Case.
 - Pasta `Application/DTOs` para DTOs compartilhados.
@@ -167,6 +168,51 @@ O projeto de testes ja vem com:
 - Teste de integracao para `GET /health`.
 - Teste de integracao para `GET /swagger/v1/swagger.json`.
 - Teste de integracao para `POST /api/samples` sem depender de PostgreSQL local.
+
+## Migrations EF Core
+
+O template ja vem com manifest local do `dotnet-ef` em `.config/dotnet-tools.json`.
+
+Depois de criar um projeto novo, restaure as ferramentas locais:
+
+```bash
+dotnet tool restore
+```
+
+Criar uma migration:
+
+```bash
+dotnet ef migrations add InitialCreate \
+  --project src/NomeDoProjeto.Infrastructure \
+  --startup-project src/NomeDoProjeto.Api \
+  --output-dir Persistence/Migrations
+```
+
+Aplicar no banco:
+
+```bash
+dotnet ef database update \
+  --project src/NomeDoProjeto.Infrastructure \
+  --startup-project src/NomeDoProjeto.Api
+```
+
+Remover a ultima migration ainda nao aplicada:
+
+```bash
+dotnet ef migrations remove \
+  --project src/NomeDoProjeto.Infrastructure \
+  --startup-project src/NomeDoProjeto.Api
+```
+
+Listar migrations:
+
+```bash
+dotnet ef migrations list \
+  --project src/NomeDoProjeto.Infrastructure \
+  --startup-project src/NomeDoProjeto.Api
+```
+
+Importante: o ambiente `Development` usa `InMemory` para rodar a API rapido no Rider, mas migrations sempre usam PostgreSQL pela `AppDbContextFactory`.
 
 ## Rodar Com Docker
 
